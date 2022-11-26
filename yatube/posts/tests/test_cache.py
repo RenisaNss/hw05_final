@@ -11,16 +11,16 @@ class CacheTests(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.user = User.objects.create(username = 'Test_name')
+        cls.user = User.objects.create(username='Test_name')
         cls.post = Post.objects.create(
-            author = cls.user,
-            text = 'Test_text'
+            author=cls.user,
+            text='Test_text'
         )
 
     def setUp(self):
         self.guest_client = Client()
 
-    
+
     def test_cache(self):
         response = self.guest_client.get('')
         first_response = response.content

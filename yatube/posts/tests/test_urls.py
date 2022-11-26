@@ -22,7 +22,7 @@ class StaticURLTests(TestCase):
             author=cls.user,
             text='Test_text',
             group=cls.group,
-        ) 
+        )
 
     def setUp(self):
         self.guest_client = Client()
@@ -35,7 +35,6 @@ class StaticURLTests(TestCase):
         self.authorized_client_2 = Client()
         self.authorized_client_2.force_login(self.user2)
 
-
     def test_urls_users_correct_templates(self):
         """URL-адрес использует соответствующий шаблон."""
         templates_url_names = {
@@ -47,7 +46,6 @@ class StaticURLTests(TestCase):
             '/create/': 'posts/create_post.html',
             '/follow/': 'posts/follow.html',
             '/unexisting_page/': 'core/404.html',
-            
         }
         for address, template in templates_url_names.items():
             with self.subTest(address=address):
@@ -55,7 +53,9 @@ class StaticURLTests(TestCase):
                 self.assertTemplateUsed(response, template)
 
     def test_loop_anonim(self):
-        """Проверяет доступны ли общедоступные страницы по ожидаемому адресу."""
+        """Проверяет доступны ли общедоступные
+        страницы по ожидаемому адресу.
+        """
         lst_clients = [
             self.guest_client,
             self.authorized_client
@@ -71,7 +71,6 @@ class StaticURLTests(TestCase):
                 with self.subTest(adress=adress):
                     response = client.get(adress)
                     self.assertEqual(response.status_code, HTTPStatus.OK)
-    
 
     def test_posts_edit(self):
         """Страница /posts/1/edit/ доступна

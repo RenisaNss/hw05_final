@@ -6,8 +6,6 @@ from . import views
 app_name = 'users'
 
 
-# Тут мы используем встроенные обработчики - классы, т.к. они встроенные, писать их не будем, шаблоны для них прописываем сразу тут
-# Но обработчик SignUp напишем сами (во views.py)
 urlpatterns = [
     path('signup/', views.SignUp.as_view(), name='signup'),
     path(

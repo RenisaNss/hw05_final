@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from ..models import Group, Post, Comment
 
 
-User = get_user_model() 
+User = get_user_model()
 
 
 class PostModelTest(TestCase):
@@ -21,11 +21,10 @@ class PostModelTest(TestCase):
             text='Тестовый пост JOJO JOJO JOJO',
         )
         cls.comment = Comment.objects.create(
-            post = cls.post,
-            author = cls.user,
-            text = 'Test_text' * 10
+            post=cls.post,
+            author=cls.user,
+            text='Test_text' * 10
         )
-
 
     def test_models_str_post(self):
         """Проверяем, что у модели Post корректно работает __str__."""
@@ -58,7 +57,7 @@ class PostModelTest(TestCase):
         )
 
     def test_models_verbose_name_post(self):
-        """Проверяем, что у модели Post ожидаемое значение verbose_name.""" 
+        """Проверяем, что у модели Post ожидаемое значение verbose_name."""
         post = PostModelTest.post
         field_verboses = {
             'text': 'Текст поста',
@@ -71,7 +70,7 @@ class PostModelTest(TestCase):
                 self.assertEqual(
                     post._meta.get_field(field).verbose_name,
                     expected_value,
-                    'В моделе Post verbose_name не соответствует запланированным'
+                    'В моделе Post verbose_name не соответствует'
                 )
 
     def test_models_verbose_name_comment(self):
@@ -88,7 +87,7 @@ class PostModelTest(TestCase):
                 self.assertEqual(
                     comment._meta.get_field(field).verbose_name,
                     expected_value,
-                    'В моделе Comment verbose_name не соответствует запланированным'
+                    'В моделе Comment verbose_name не соответствует'
                 )
 
     def test_models_help_text_post(self):

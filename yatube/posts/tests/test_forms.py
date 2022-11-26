@@ -21,21 +21,21 @@ class PostCreateFormTests(TestCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.user = User.objects.create(
-            username = 'Test_name'
+            username='Test_name'
         )
         cls.group = Group.objects.create(
-            title = 'Test_title_group',
-            slug = 'test_slug_group'
+            title='Test_title_group',
+            slug='test_slug_group'
         )
         cls.post = Post.objects.create(
-            text = 'Test_text',
-            author = cls.user,
-            group = cls.group
+            text='Test_text',
+            author=cls.user,
+            group=cls.group
         )
         cls.comment = Comment.objects.create(
-            post = cls.post,
-            author = cls.user,
-            text = 'Test_comment'
+            post=cls.post,
+            author=cls.user,
+            text='Test_comment'
         )
         cls.form = PostForm()
 
@@ -49,7 +49,7 @@ class PostCreateFormTests(TestCase):
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
 
-    
+
     def test_create_post(self):
         """Проверка создания новой записи в модели Post"""
         posts_count = Post.objects.count()
@@ -76,11 +76,11 @@ class PostCreateFormTests(TestCase):
             data=form_data,
             follow=True
         )
-        
+
         self.assertRedirects(response, reverse(
             'posts:profile', kwargs={'username': self.post.author}
         ))
-        
+
         self.assertEqual(
             Post.objects.count(),
             posts_count+1
@@ -89,7 +89,7 @@ class PostCreateFormTests(TestCase):
             Post.objects.filter(
                 text='Test_text',
                 author=self.user,
-                group = PostCreateFormTests.group,
+                group=PostCreateFormTests.group,
                 image='posts/small.gif'
             ).exists()
         )

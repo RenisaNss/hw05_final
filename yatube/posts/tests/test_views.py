@@ -7,7 +7,6 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase, Client, override_settings
 from posts.models import Post, Group, Follow
 from django.core.files.uploadedfile import SimpleUploadedFile
-import time
 
 TEMP_MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
 
@@ -20,17 +19,17 @@ class PostViews(TestCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.user = User.objects.create(
-            username = 'Test_name'
+            username='Test_name'
         )
         cls.group = Group.objects.create(
-            title = 'Test_title',
-            slug = 'test_slug'
+            title='Test_title',
+            slug='test_slug'
         )
         cls.group_without_posts = Group.objects.create(
-            title = 'Test_title_without_posts',
-            slug = 'test_title_without_posts'
+            title='Test_title_without_posts',
+            slug='test_title_without_posts'
         )
-        small_gif = (            
+        small_gif = (  
              b'\x47\x49\x46\x38\x39\x61\x02\x00'
              b'\x01\x00\x80\x00\x00\x00\x00\x00'
              b'\xFF\xFF\xFF\x21\xF9\x04\x00\x00'
@@ -44,10 +43,10 @@ class PostViews(TestCase):
             content_type='image/gif'
         )
         cls.post = Post.objects.create(
-            text = 'Test_text_0',
-            group = cls.group,
-            author = cls.user,
-            image = uploaded
+            text='Test_text_0',
+            group=cls.group,
+            author=cls.user,
+            image=uploaded
         )
 
     @classmethod
@@ -182,22 +181,22 @@ class PaginatorViewsTest(TestCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.user = User.objects.create(
-            username = 'Test_name'
+            username='Test_name'
         )
         cls.group = Group.objects.create(
-            title = 'Test_title',
-            slug = 'test_slug'
+            title='Test_title',
+            slug='test_slug'
         )
         cls.posts = []
 
         for i in range(13):
             cls.posts.append(Post(
-            text = f'Test_text_{i+1}',
-            group = cls.group,
-            author = cls.user,
+            text=f'Test_text_{i+1}',
+            group=cls.group,
+            author=cls.user,
             ))
             cls.posts[i].save()
-        
+
 
     def setUp(self):
         self.user = PaginatorViewsTest.user
@@ -225,29 +224,7 @@ class PaginatorViewsTest(TestCase):
                         self.assertEqual(len(response.context['page_obj']), 3)
                     else:
                         response = self.authorized_client.get(reverse_name)
-                        self.assertEqual(len(response.context['page_obj']), 10)   
-
-
-    # Этот тест проходит если тестировать только view, если тестировать сразу всё, он не проходит
-    # def test_paginator_context(self):
-    #     """Пагинатор возвращает записи с правильным контекстом."""
-    #     lst_revese_name = [
-    #         reverse('posts:index'),
-    #         reverse(
-    #             'posts:group_list', kwargs={'slug': PaginatorViewsTest.group.slug}),
-    #         reverse(
-    #             'posts:profile', kwargs={'username': self.user})
-    #     ]
-
-    #     for reverse_name in lst_revese_name:
-    #         with self.subTest(reverse_name=reverse_name):
-    #             response = self.authorized_client.get(reverse_name)
-    #             bd_list = PaginatorViewsTest.posts[::-1][:10]
-    #             print(bd_list)
-    #             paginator_list = response.context['page_obj'].object_list
-    #             print('******************************')
-    #             print(paginator_list)
-    #             self.assertEqual(bd_list, paginator_list)
+                        self.assertEqual(len(response.context['page_obj']), 10)
 
 
 class PostViewsFollow(TestCase):
@@ -255,18 +232,18 @@ class PostViewsFollow(TestCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.user = User.objects.create(
-            username = 'Test_name'
+            username='Test_name'
         )
         cls.author = User.objects.create(
-            username = 'Test_author'
+            username='Test_author'
         )
         cls.post = Post.objects.create(
-            text = 'Test_text_0',
-            author = cls.user,
+            text='Test_text_0',
+            author=cls.user,
         )
         cls.post_of_author = Post.objects.create(
-            text = 'Test_text_of_author',
-            author = cls.author,
+            text='Test_text_of_author',
+            author=cls.author,
         )
 
     def setUp(self):
@@ -346,4 +323,3 @@ class PostViewsFollow(TestCase):
         self.assertEqual(
             len(response.context['page_obj']), 1
         )
-
