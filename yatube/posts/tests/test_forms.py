@@ -49,17 +49,16 @@ class PostCreateFormTests(TestCase):
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
 
-
     def test_create_post(self):
         """Проверка создания новой записи в модели Post"""
         posts_count = Post.objects.count()
-        small_gif = (            
-             b'\x47\x49\x46\x38\x39\x61\x02\x00'
-             b'\x01\x00\x80\x00\x00\x00\x00\x00'
-             b'\xFF\xFF\xFF\x21\xF9\x04\x00\x00'
-             b'\x00\x00\x00\x2C\x00\x00\x00\x00'
-             b'\x02\x00\x01\x00\x00\x02\x02\x0C'
-             b'\x0A\x00\x3B'
+        small_gif = (     
+            b'\x47\x49\x46\x38\x39\x61\x02\x00'
+            b'\x01\x00\x80\x00\x00\x00\x00\x00'
+            b'\xFF\xFF\xFF\x21\xF9\x04\x00\x00'
+            b'\x00\x00\x00\x2C\x00\x00\x00\x00'
+            b'\x02\x00\x01\x00\x00\x02\x02\x0C'
+            b'\x0A\x00\x3B'
         )
         uploaded = SimpleUploadedFile(
             name='small.gif',
@@ -83,7 +82,7 @@ class PostCreateFormTests(TestCase):
 
         self.assertEqual(
             Post.objects.count(),
-            posts_count+1
+            posts_count + 1
         )
         self.assertTrue(
             Post.objects.filter(
@@ -128,8 +127,10 @@ class PostCreateFormTests(TestCase):
             'text': 'Test_comment_2',
         }
         response = self.authorized_client.post(
-            reverse('posts:add_comment',
-            kwargs={'post_id': PostCreateFormTests.post.id}),
+            reverse(
+                'posts:add_comment',
+                kwargs={'post_id': PostCreateFormTests.post.id}
+            ),
             data=form_data,
             follow=True
         )
@@ -139,11 +140,11 @@ class PostCreateFormTests(TestCase):
                 'posts:post_detail',
                 kwargs={'post_id': PostCreateFormTests.post.id})
             )
-        self.assertEqual(Comment.objects.count(), comment_count+1)
+        self.assertEqual(Comment.objects.count(), comment_count + 1)
         self.assertTrue(
             Comment.objects.filter(
-                post = PostCreateFormTests.post.id,
-                author = PostCreateFormTests.user.id,
-                text = 'Test_comment_2',
+                post=PostCreateFormTests.post.id,
+                author=PostCreateFormTests.user.id,
+                text='Test_comment_2',
             ).exists()
         )

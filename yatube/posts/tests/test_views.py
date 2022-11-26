@@ -29,13 +29,13 @@ class PostViews(TestCase):
             title='Test_title_without_posts',
             slug='test_title_without_posts'
         )
-        small_gif = (  
-             b'\x47\x49\x46\x38\x39\x61\x02\x00'
-             b'\x01\x00\x80\x00\x00\x00\x00\x00'
-             b'\xFF\xFF\xFF\x21\xF9\x04\x00\x00'
-             b'\x00\x00\x00\x2C\x00\x00\x00\x00'
-             b'\x02\x00\x01\x00\x00\x02\x02\x0C'
-             b'\x0A\x00\x3B'
+        small_gif = (
+            b'\x47\x49\x46\x38\x39\x61\x02\x00'
+            b'\x01\x00\x80\x00\x00\x00\x00\x00'
+            b'\xFF\xFF\xFF\x21\xF9\x04\x00\x00'
+            b'\x00\x00\x00\x2C\x00\x00\x00\x00'
+            b'\x02\x00\x01\x00\x00\x02\x02\x0C'
+            b'\x0A\x00\x3B'
         )
         uploaded = SimpleUploadedFile(
             name='small.gif',
@@ -52,8 +52,8 @@ class PostViews(TestCase):
     @classmethod
     def tearDownClass(cls):
         super().tearDownClass()
-        shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)    
-    
+        shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
+
     def setUp(self):
         self.guest_client = Client()
 
@@ -61,7 +61,6 @@ class PostViews(TestCase):
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
 
-    
     def test_name_space(self):
         """Проверка вызываемых шаблонов по namespace."""
         dct = {
@@ -88,7 +87,7 @@ class PostViews(TestCase):
         for reverse_name, template in dct.items():
             with self.subTest(reverse_name = reverse_name):
                 response = self.authorized_client.get(reverse_name)
-                self.assertTemplateUsed(response, template)   
+                self.assertTemplateUsed(response, template)
 
     def test_context_page_obj_in_index_group_profile(self):
         """Проверка правильного списка записей переданного в контекст."""
@@ -97,27 +96,32 @@ class PostViews(TestCase):
             self.authorized_client.get(
                 reverse(
                     'posts:group_list',
-                    kwargs = {'slug': f'{PostViews.group.slug}'}
+                    kwargs={'slug': f'{PostViews.group.slug}'}
                 )),
             self.authorized_client.get(
                 reverse(
                     'posts:profile',
-                    kwargs = {'username': f'{self.user}'}
+                    kwargs={'username': f'{self.user}'}
                 ))
         ]
         for response in lst_reverse_name:
             with self.subTest(response=response):
                 first_object = response.context['page_obj'][0]
                 self.assertEqual(first_object.text, PostViews.post.text)
-                self.assertEqual(first_object.group.title, PostViews.group.title)
+                self.assertEqual(
+                    first_object.group.title,
+                    PostViews.group.title
+                )
                 self.assertEqual(first_object.author, PostViews.user)
                 self.assertEqual(first_object.image, PostViews.post.image)
         
 
     def test_context_post_detail(self):
-        """Страница одного поста "post_detail" возвращает правильный контекст."""
+        """Страница одного поста "post_detail"
+        возвращает правильный контекст.
+        """
         response = self.authorized_client.get(reverse(
-            'posts:post_detail', kwargs = {'post_id': f'{PostViews.post.id}'}
+            'posts:post_detail', kwargs={'post_id': f'{PostViews.post.id}'}
         ))
         object = response.context.get('post')
         self.assertEqual(object.text, PostViews.post.text)
@@ -135,7 +139,9 @@ class PostViews(TestCase):
         lst = [
             self.authorized_client.get(reverse('posts:post_create')),
             self.authorized_client.get(
-                reverse('posts:post_edit', kwargs={'post_id': f'{PostViews.post.id}'}) 
+                reverse(
+                    'posts:post_edit',
+                    kwargs={'post_id': f'{PostViews.post.id}'})
             )
         ]
         form_fields = {           
@@ -197,12 +203,10 @@ class PaginatorViewsTest(TestCase):
             ))
             cls.posts[i].save()
 
-
     def setUp(self):
         self.user = PaginatorViewsTest.user
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
-
 
     def test_paginator_second_page(self):
         """Пагинатор возвращает на 1стр. 10 постов, на 2стр. 3 поста."""

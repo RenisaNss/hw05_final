@@ -41,7 +41,7 @@ class Post(models.Model):
         'Картинка',
         upload_to='posts/',
         blank=True
-    )  
+    )
 
     class Meta():
         ordering = ['-pub_date']
@@ -55,7 +55,7 @@ class Comment(models.Model):
         Post,
         on_delete=models.CASCADE,
         verbose_name='Комментарий',
-        related_name = 'comments'
+        related_name='comments'
     )
     author = models.ForeignKey(
         User,

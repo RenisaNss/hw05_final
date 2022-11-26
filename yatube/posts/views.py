@@ -86,10 +86,10 @@ def add_comment(request, post_id):
 @login_required
 def post_create(request):
     if request.method == "POST":
-        form = PostForm( 
-            request.POST,           
+        form = PostForm(
+            request.POST,
             files=request.FILES or None,
-        )                                                                          
+        )
         if form.is_valid():
             post = form.save(commit=False)
             post.author = request.user
@@ -137,6 +137,7 @@ def follow_index(request):
         'page_obj': page_obj
     }
     return render(request, 'posts/follow.html', context)
+
 
 @login_required
 def profile_follow(request, username):

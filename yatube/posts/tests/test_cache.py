@@ -20,7 +20,6 @@ class CacheTests(TestCase):
     def setUp(self):
         self.guest_client = Client()
 
-
     def test_cache(self):
         response = self.guest_client.get('')
         first_response = response.content
