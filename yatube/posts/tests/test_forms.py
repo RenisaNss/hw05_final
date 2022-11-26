@@ -52,7 +52,7 @@ class PostCreateFormTests(TestCase):
     def test_create_post(self):
         """Проверка создания новой записи в модели Post"""
         posts_count = Post.objects.count()
-        small_gif = (     
+        small_gif = (
             b'\x47\x49\x46\x38\x39\x61\x02\x00'
             b'\x01\x00\x80\x00\x00\x00\x00\x00'
             b'\xFF\xFF\xFF\x21\xF9\x04\x00\x00'
@@ -139,7 +139,7 @@ class PostCreateFormTests(TestCase):
             reverse(
                 'posts:post_detail',
                 kwargs={'post_id': PostCreateFormTests.post.id})
-            )
+        )
         self.assertEqual(Comment.objects.count(), comment_count + 1)
         self.assertTrue(
             Comment.objects.filter(

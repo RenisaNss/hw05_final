@@ -114,7 +114,6 @@ class PostViews(TestCase):
                 )
                 self.assertEqual(first_object.author, PostViews.user)
                 self.assertEqual(first_object.image, PostViews.post.image)
-        
 
     def test_context_post_detail(self):
         """Страница одного поста "post_detail"
@@ -144,7 +143,7 @@ class PostViews(TestCase):
                     kwargs={'post_id': f'{PostViews.post.id}'})
             )
         ]
-        form_fields = {           
+        form_fields = {
             'text': forms.fields.CharField,
             'group': forms.fields.ChoiceField,
             'image': forms.fields.ImageField,
@@ -177,7 +176,7 @@ class PostViews(TestCase):
         """Пост не попал в группу, для которой не был предназначен."""
         response = self.authorized_client.get(reverse(
             'posts:group_list',
-            kwargs = {'slug': f'{PostViews.group_without_posts.slug}'}
+            kwargs={'slug': f'{PostViews.group_without_posts.slug}'}
         ))
         self.assertEqual(len(response.context['page_obj']), 0)
 
@@ -197,10 +196,10 @@ class PaginatorViewsTest(TestCase):
 
         for i in range(13):
             cls.posts.append(Post(
-            text=f'Test_text_{i+1}',
-            group=cls.group,
-            author=cls.user,
-            ))
+                text=f'Test_text_{i + 1}',
+                group=cls.group,
+                author=cls.user,)
+            )
             cls.posts[i].save()
 
     def setUp(self):
@@ -209,12 +208,15 @@ class PaginatorViewsTest(TestCase):
         self.authorized_client.force_login(self.user)
 
     def test_paginator_second_page(self):
-        """Пагинатор возвращает на 1стр. 10 постов, на 2стр. 3 поста."""
+        """Пагинатор возвращает на 1стр.
+        10 постов, на 2стр. 3 поста.
+        """
         lst_numb_page_paginator = ['1_page', '2_page']
         lst_revese_name = [
             reverse('posts:index'),
             reverse(
-                'posts:group_list', kwargs={'slug': PaginatorViewsTest.group.slug}),
+                'posts:group_list',
+                kwargs={'slug': PaginatorViewsTest.group.slug}),
             reverse(
                 'posts:profile', kwargs={'username': self.user})
         ]
@@ -223,12 +225,20 @@ class PaginatorViewsTest(TestCase):
             for reverse_name in lst_revese_name:
                 with self.subTest(reverse_name=reverse_name):
                     if num_page == 'page_2':
-                        response = self.authorized_client.get(reverse_name, {'page': 2})
-                        # Либо так:                          (reverse_name + '?page=2')
-                        self.assertEqual(len(response.context['page_obj']), 3)
+                        response = self.authorized_client.get(
+                            reverse_name, {'page': 2}
+                        )
+                        # Либо так:(reverse_name + '?page=2')
+                        self.assertEqual(
+                            len(response.context['page_obj']), 3
+                        )
                     else:
-                        response = self.authorized_client.get(reverse_name)
-                        self.assertEqual(len(response.context['page_obj']), 10)
+                        response = self.authorized_client.get(
+                            reverse_name
+                        )
+                        self.assertEqual(
+                            len(response.context['page_obj']), 10
+                        )
 
 
 class PostViewsFollow(TestCase):
@@ -255,7 +265,6 @@ class PostViewsFollow(TestCase):
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
 
-    
     def test_follow(self):
         """Авторизованный пользователь может подписываться
         на других пользователей и удалять их из подписок.
