@@ -140,7 +140,7 @@ def follow_index(request):
 @login_required
 def profile_follow(request, username):
     """Подписаться на автора"""
-    author = get_object_or_404(username=username)
+    author = get_object_or_404(User, username=username)
     check_for_existence = (
         Follow.objects.filter(
             user=request.user, author=author
@@ -158,7 +158,7 @@ def profile_follow(request, username):
 @login_required
 def profile_unfollow(request, username):
     """Дизлайк, отписка"""
-    author = get_object_or_404(username=username)
+    author = get_object_or_404(User, username=username)
     # Добавил проверку на то что мы подписаны на автора, что бы не было ошибки
     check_for_existence = (
         request.user.is_authenticated and Follow.objects.filter(
