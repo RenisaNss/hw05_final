@@ -137,7 +137,7 @@ class PostViews(TestCase):
         )
         form_field = response.context.get('form').fields.get('text')
         self.assertIsInstance(form_field, forms.fields.CharField)
-        self.assertEqual(len(response.context['comments']), 1)
+        self.assertEqual(len(self.post.comments.all()), 1)
 
     def test_form_create_and_edit_post(self):
         """Проверка ожидаемых виджетов полей формы."""
