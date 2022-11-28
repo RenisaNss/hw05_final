@@ -287,7 +287,7 @@ class PostViewsFollow(TestCase):
                 author=PostViewsFollow.author
             ).exists()
         )
-    
+
     def test_unfollow(self):
         """Авторизованный пользователь может удалять авторов из подписок."""
         self.authorized_client.get(
