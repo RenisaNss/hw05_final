@@ -122,8 +122,6 @@ class PostCreateFormTests(TestCase):
         """Проверка добавления комментария"""
         comment_count = Comment.objects.count()
         form_data = {
-            'post': PostCreateFormTests.post.id,
-            'author': PostCreateFormTests.user.id,
             'text': 'Test_comment_2',
         }
         response = self.authorized_client.post(
@@ -143,8 +141,6 @@ class PostCreateFormTests(TestCase):
         self.assertEqual(Comment.objects.count(), comment_count + 1)
         self.assertTrue(
             Comment.objects.filter(
-                post=PostCreateFormTests.post.id,
-                author=PostCreateFormTests.user.id,
                 text='Test_comment_2',
             ).exists()
         )

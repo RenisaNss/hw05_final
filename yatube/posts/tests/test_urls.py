@@ -132,9 +132,55 @@ class StaticURLTests(TestCase):
         )
         self.assertRedirects(response, f'/posts/{StaticURLTests.post.pk}/')
 
+    def test_follow_page(self):
+        """Страница постов авторов по подписке
+        доступны только авторизованному пользователю
+        """
+        response = self.guest_client.get('/follow/', follow=True)
+        self.assertRedirects(
+            response,
+            '/auth/login/?next=/follow/'
+        )
+        response = self.authorized_client.get('/follow/')
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+
+    def test_follow(self):
+        """Страница подписки доступна только авторизованному пользователю"""
+        response = self.guest_client.get(
+            f'/profile/{self.user}/follow/',
+            follow=True
+        )
+        self.assertRedirects(
+            response, f'/auth/login/?next=/profile/{self.user}/follow/'
+        )
+        response = self.authorized_client.get(
+            f'/profile/{self.user2}/follow/'
+        )
+        self.assertRedirects(
+            response, f'/profile/{self.user2}/'
+        )
+
+    def test_unfollow(self):
+        """Страница отписки доступна только авторизованному пользователю"""
+        response = self.guest_client.get(
+            f'/profile/{self.user}/unfollow/',
+            follow=True
+        )
+        self.assertRedirects(
+            response, f'/auth/login/?next=/profile/{self.user}/unfollow/'
+        )
+        response = self.authorized_client.get(
+            f'/profile/{self.user2}/unfollow/'
+        )
+        self.assertRedirects(
+            response, f'/profile/{self.user2}/'
+        )
+
     def test_404_error(self):
         """Несуществующая страница /unexisting_page/ возвращает 404"""
         response = self.guest_client.get('/unexisting_page/')
         self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
         response = self.authorized_client.get('/unexisting_page/')
         self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
+
+

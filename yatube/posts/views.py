@@ -18,7 +18,6 @@ def paginator(request, value):
 
 
 def index(request):
-    print(request.user)
     post_list = Post.objects.all()
     page_obj = paginator(request, post_list)
     template = 'posts/index.html'
@@ -64,8 +63,7 @@ def post_detail(request, post_id):
     context = {
         'post': post,
         'post_id': post_id,
-        'form': form,
-        'comments': post.comments.all()
+        'form': form
     }
     return render(request, 'posts/post_detail.html', context)
 
@@ -142,8 +140,13 @@ def follow_index(request):
 @login_required
 def profile_follow(request, username):
     """Подписаться на автора"""
-    author = User.objects.get(username=username)
-    if not Follow.objects.filter(author=author).exists():
+    author = get_object_or_404(username=username)
+    check_for_existence = (
+        Follow.objects.filter(
+            user=request.user, author=author
+        ).exists()
+    )
+    if not check_for_existence:
         if author != request.user:
             Follow.objects.create(
                 user=request.user,
@@ -155,9 +158,17 @@ def profile_follow(request, username):
 @login_required
 def profile_unfollow(request, username):
     """Дизлайк, отписка"""
-    author = User.objects.get(username=username)
-    a = Follow.objects.get(
-        author=author
+    author = get_object_or_404(username=username)
+    # Добавил проверку на то что мы подписаны на автора, что бы не было ошибки
+    check_for_existence = (
+        request.user.is_authenticated and Follow.objects.filter(
+            user=request.user, author=author
+        ).exists()
     )
-    a.delete()
+    if check_for_existence:
+        a = Follow.objects.get(
+            user=request.user,
+            author=author
+        )
+        a.delete()
     return redirect('posts:profile', username)

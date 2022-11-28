@@ -20,14 +20,13 @@ class CacheTests(TestCase):
     def setUp(self):
         self.guest_client = Client()
 
-    def test_cache(self):
+    def test_cache_2(self):
+        """После удаление поста он остается на странице"""
         response = self.guest_client.get('')
         first_response = response.content
         CacheTests.post.delete()
-        cache.clear()
-        # Без очистки кэша запрос был бы к старому кешу
         response = self.guest_client.get('')
         second_response = response.content
-        self.assertNotEqual(
+        self.assertEqual(
             first_response, second_response
         )

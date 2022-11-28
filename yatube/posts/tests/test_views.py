@@ -5,7 +5,7 @@ from django.urls import reverse
 from django import forms
 from django.contrib.auth import get_user_model
 from django.test import TestCase, Client, override_settings
-from posts.models import Post, Group, Follow
+from posts.models import Post, Group, Follow, Comment
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 TEMP_MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
@@ -47,6 +47,11 @@ class PostViews(TestCase):
             group=cls.group,
             author=cls.user,
             image=uploaded
+        )
+        cls.comment = Comment.objects.create(
+            post=cls.post,
+            author=cls.user,
+            text='Test_text_comment'
         )
 
     @classmethod
@@ -117,7 +122,7 @@ class PostViews(TestCase):
 
     def test_context_post_detail(self):
         """Страница одного поста "post_detail"
-        возвращает правильный контекст.
+        возвращает правильный контекст и комментарий.
         """
         response = self.authorized_client.get(reverse(
             'posts:post_detail', kwargs={'post_id': f'{PostViews.post.id}'}
@@ -132,6 +137,7 @@ class PostViews(TestCase):
         )
         form_field = response.context.get('form').fields.get('text')
         self.assertIsInstance(form_field, forms.fields.CharField)
+        self.assertEqual(len(response.context['comments']), 1)
 
     def test_form_create_and_edit_post(self):
         """Проверка ожидаемых виджетов полей формы."""
@@ -266,8 +272,8 @@ class PostViewsFollow(TestCase):
         self.authorized_client.force_login(self.user)
 
     def test_follow(self):
-        """Авторизованный пользователь может подписываться
-        на других пользователей и удалять их из подписок.
+        """Авторизованный пользователь может
+        подписываться на других пользователей.
         """
         self.authorized_client.get(
             reverse(
@@ -281,6 +287,9 @@ class PostViewsFollow(TestCase):
                 author=PostViewsFollow.author
             ).exists()
         )
+    
+    def test_unfollow(self):
+        """Авторизованный пользователь может удалять авторов из подписок."""
         self.authorized_client.get(
             reverse(
                 'posts:profile_unfollow',
@@ -302,11 +311,11 @@ class PostViewsFollow(TestCase):
                 kwargs={'username': self.user.username}
             )
         )
-        response = self.authorized_client.get(
-            reverse('posts:follow_index')
-        )
-        self.assertEqual(
-            len(response.context['page_obj']), 0
+        self.assertFalse(
+            Follow.objects.filter(
+                author=self.user,
+                user=self.user
+            ).exists()
         )
 
     def test_follow_posts_not_exists(self):
@@ -324,11 +333,9 @@ class PostViewsFollow(TestCase):
         """Новая запись пользователя появляется в ленте тех,
         кто на него подписан.
         """
-        self.authorized_client.get(
-            reverse(
-                'posts:profile_follow',
-                kwargs={'username': PostViewsFollow.author.username}
-            )
+        Follow.objects.create(
+            user=self.user,
+            author=PostViewsFollow.author
         )
         response = self.authorized_client.get(
             reverse('posts:follow_index')
