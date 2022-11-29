@@ -290,6 +290,10 @@ class PostViewsFollow(TestCase):
 
     def test_unfollow(self):
         """Авторизованный пользователь может удалять авторов из подписок."""
+        Follow.objects.create(
+            user=self.user,
+            author=PostViewsFollow.author
+        )
         self.authorized_client.get(
             reverse(
                 'posts:profile_unfollow',
@@ -300,7 +304,7 @@ class PostViewsFollow(TestCase):
             Follow.objects.filter(
                 user=self.user,
                 author=PostViewsFollow.author
-            )
+            ).exists()
         )
 
     def test_follow_not_himself(self):
@@ -343,3 +347,24 @@ class PostViewsFollow(TestCase):
         self.assertEqual(
             len(response.context['page_obj']), 1
         )
+        
+    # Добавил тест на проверку удаления поста
+    def test_delete_post(self):
+        """Пользователь может удалить свой пост."""
+        post_to_delete = Post.objects.create(
+                text='Текст_поста_для_удаления',
+                author=self.user
+        )
+        self.authorized_client.get(
+            reverse(
+                'posts:post_delete',
+                kwargs={'post_id': post_to_delete.id}
+            )
+        )
+        self.assertFalse(
+            Post.objects.filter(
+                text='Текст_поста_для_удаления',
+                author=self.user
+            ).exists()
+        )
+

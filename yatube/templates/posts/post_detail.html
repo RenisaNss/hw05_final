@@ -11,7 +11,11 @@
   <aside class="col-12 col-md-3">
     <ul class="list-group list-group-flush">
       <li class="list-group-item">
-        Автор: {{ post.author.get_full_name }}
+        {% if post.author.get_full_name %}
+          Автор: {{ post.author.get_full_name }}
+          {% else %}
+          Автор: {{ post.author.username }}
+        {% endif %}
       </li>
       {% if post.group %}
       <li class="list-group-item">
@@ -22,7 +26,7 @@
       <li class="list-group-item">
         Дата публикации: {{ post.pub_date|date:"d E Y" }}
       </li>
-      {% if user == post.author %}
+      {% if user == post.author and user.is_authenticated %}
       <li class="list-group-item d-flex justify-content-between align-items-center">
         <a href="{% url 'posts:profile' post.author.username %}">
           Все мои посты

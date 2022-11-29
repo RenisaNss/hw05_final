@@ -14,7 +14,9 @@
     </div>
   </div>
 {% endif %}
-
+  <p>
+    Всего комментариев: {{ post.comments.count }}
+  </p>
 {% for comment in post.comments.all %}
   <div class="media mb-4">
     <div class="media-body">

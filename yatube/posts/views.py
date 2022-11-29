@@ -24,7 +24,6 @@ def index(request):
     context = {
         'page_obj': page_obj,
     }
-    print(request.COOKIES)
     return render(request, template, context)
 
 
@@ -70,7 +69,7 @@ def post_detail(request, post_id):
 
 @login_required
 def add_comment(request, post_id):
-    """Save comment in BD."""
+    """Save comment in DB."""
     post = get_object_or_404(Post, id=post_id)
     form = CommentForm(request.POST or None)
     if form.is_valid():
@@ -100,7 +99,9 @@ def post_create(request):
 
 @login_required
 def post_delete(request, post_id):
-    post = Post.objects.get(pk=post_id)
+    post = get_object_or_404(Post, id=post_id)
+    if post.author != request.user:
+        return redirect('posts:post_detail', post_id)
     post.delete()
     return redirect('posts:index')
 
@@ -146,12 +147,11 @@ def profile_follow(request, username):
             user=request.user, author=author
         ).exists()
     )
-    if not check_for_existence:
-        if author != request.user:
-            Follow.objects.create(
-                user=request.user,
-                author=author
-            )
+    if not check_for_existence and author != request.user:
+        Follow.objects.create(
+            user=request.user,
+            author=author
+        )
     return redirect('posts:profile', username)
 
 
@@ -165,10 +165,12 @@ def profile_unfollow(request, username):
             user=request.user, author=author
         ).exists()
     )
+    # Лучше сделать отписку через filter(..).delete(),
+    # тогда не потребуется предварительная проверка наличия объекта
+    # в БД и количество запросов уменьшиться с 3 до 1.
     if check_for_existence:
-        a = Follow.objects.get(
+        Follow.objects.filter(
             user=request.user,
             author=author
-        )
-        a.delete()
+        ).delete()
     return redirect('posts:profile', username)

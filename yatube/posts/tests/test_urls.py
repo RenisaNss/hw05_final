@@ -134,7 +134,7 @@ class StaticURLTests(TestCase):
 
     def test_follow_page(self):
         """Страница постов авторов по подписке
-        доступны только авторизованному пользователю
+        доступны только авторизованному пользователю.
         """
         response = self.guest_client.get('/follow/', follow=True)
         self.assertRedirects(
@@ -145,7 +145,7 @@ class StaticURLTests(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_follow(self):
-        """Страница подписки доступна только авторизованному пользователю"""
+        """Страница подписки доступна только авторизованному пользователю."""
         response = self.guest_client.get(
             f'/profile/{self.user}/follow/',
             follow=True
@@ -153,15 +153,9 @@ class StaticURLTests(TestCase):
         self.assertRedirects(
             response, f'/auth/login/?next=/profile/{self.user}/follow/'
         )
-        response = self.authorized_client.get(
-            f'/profile/{self.user2}/follow/'
-        )
-        self.assertRedirects(
-            response, f'/profile/{self.user2}/'
-        )
 
     def test_unfollow(self):
-        """Страница отписки доступна только авторизованному пользователю"""
+        """Страница отписки доступна только авторизованному пользователю."""
         response = self.guest_client.get(
             f'/profile/{self.user}/unfollow/',
             follow=True
@@ -169,11 +163,17 @@ class StaticURLTests(TestCase):
         self.assertRedirects(
             response, f'/auth/login/?next=/profile/{self.user}/unfollow/'
         )
-        response = self.authorized_client.get(
-            f'/profile/{self.user2}/unfollow/'
+
+    def test_delete_post_page(self):
+        """Страница удаления поста доступна
+        только авторизованному пользователю.
+        """
+        response = self.guest_client.get(
+            f'/posts/{StaticURLTests.post.id}/delete/'
         )
         self.assertRedirects(
-            response, f'/profile/{self.user2}/'
+            response,
+            f'/auth/login/?next=/posts/{StaticURLTests.post.id}/delete/'
         )
 
     def test_404_error(self):

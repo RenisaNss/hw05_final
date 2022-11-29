@@ -142,5 +142,7 @@ class PostCreateFormTests(TestCase):
         self.assertTrue(
             Comment.objects.filter(
                 text='Test_comment_2',
+                post=PostCreateFormTests.post,
+                author=self.user
             ).exists()
         )

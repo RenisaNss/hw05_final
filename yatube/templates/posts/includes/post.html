@@ -4,7 +4,11 @@
 <article>  
     <ul>
     <li>
-        Автор: {{ post.author.get_full_name }}
+        {% if post.author.get_full_name %}
+            Автор: {{ post.author.get_full_name }}
+        {% else %}
+            Автор: {{ post.author.username }}
+        {% endif %}
     </li>
     <li>
         Дата публикации: {{ post.pub_date|date:"d E Y" }}
