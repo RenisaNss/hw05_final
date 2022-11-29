@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase, Client
 from posts.models import Post
-from django.core.cache import cache 
+from django.core.cache import cache
 
 
 User = get_user_model()
@@ -38,4 +38,3 @@ class CacheTests(TestCase):
             first_response,
             response_after_clear
         )
-

@@ -347,13 +347,13 @@ class PostViewsFollow(TestCase):
         self.assertEqual(
             len(response.context['page_obj']), 1
         )
-        
+
     # Добавил тест на проверку удаления поста
     def test_delete_post(self):
         """Пользователь может удалить свой пост."""
         post_to_delete = Post.objects.create(
-                text='Текст_поста_для_удаления',
-                author=self.user
+            text='Текст_поста_для_удаления',
+            author=self.user
         )
         self.authorized_client.get(
             reverse(
