@@ -367,4 +367,3 @@ class PostViewsFollow(TestCase):
                 author=self.user
             ).exists()
         )
-
