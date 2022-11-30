@@ -97,6 +97,7 @@ class PostCreateFormTests(TestCase):
         """Проверка изменения поста"""
         form_data = {
             'text': 'chanje_text',
+            'group': PostCreateFormTests.group.id
         }
         response = self.authorized_client.post(
             reverse(
@@ -114,7 +115,10 @@ class PostCreateFormTests(TestCase):
         )
         self.assertTrue(
             Post.objects.filter(
-                text='chanje_text'
+                text='chanje_text',
+                author=self.user,
+                group=PostCreateFormTests.group.id,
+                id=PostCreateFormTests.post.id
             ).exists()
         )
 

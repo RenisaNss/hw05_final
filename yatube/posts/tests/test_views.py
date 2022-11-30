@@ -348,7 +348,6 @@ class PostViewsFollow(TestCase):
             len(response.context['page_obj']), 1
         )
 
-    # Добавил тест на проверку удаления поста
     def test_delete_post(self):
         """Пользователь может удалить свой пост."""
         post_to_delete = Post.objects.create(

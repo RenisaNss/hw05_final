@@ -23,6 +23,7 @@ def index(request):
     template = 'posts/index.html'
     context = {
         'page_obj': page_obj,
+        'index': True
     }
     return render(request, template, context)
 
@@ -132,8 +133,16 @@ def post_edit(request, post_id):
 def follow_index(request):
     posts = Post.objects.filter(author__following__user=request.user)
     page_obj = paginator(request, posts)
+    # Добавил проверку на то подписан ли юзер хотя бы на одного пользователя
+    # что бы в случае False, отобразить пользователю сообщение об этом,
+    # и предложить перейти на главную
+    existence_of_subscription = Follow.objects.filter(
+        user=request.user
+    ).exists()
     context = {
-        'page_obj': page_obj
+        'page_obj': page_obj,
+        'follow': True,
+        'existence_of_subscription': existence_of_subscription
     }
     return render(request, 'posts/follow.html', context)
 
@@ -159,18 +168,14 @@ def profile_follow(request, username):
 def profile_unfollow(request, username):
     """Дизлайк, отписка"""
     author = get_object_or_404(User, username=username)
-    # Добавил проверку на то что мы подписаны на автора, что бы не было ошибки
-    check_for_existence = (
-        request.user.is_authenticated and Follow.objects.filter(
-            user=request.user, author=author
-        ).exists()
-    )
+    # Андрей Никулин, все что ниже в комментарии верно?
     # Лучше сделать отписку через filter(..).delete(),
     # тогда не потребуется предварительная проверка наличия объекта
     # в БД и количество запросов уменьшиться с 3 до 1.
-    if check_for_existence:
-        Follow.objects.filter(
-            user=request.user,
-            author=author
-        ).delete()
+    # Ошибки при ненахождении не будет, пользователь останется
+    # на той же странице что и был, ничего не произойдет.
+    Follow.objects.filter(
+        user=request.user,
+        author=author
+    ).delete()
     return redirect('posts:profile', username)

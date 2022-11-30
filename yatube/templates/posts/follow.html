@@ -11,6 +11,14 @@
   <div class="container py-5">
     <h1>Посты по подпискам</h1>
     <br><br>
+    {% if existence_of_subscription == False %}
+      <p>
+        Вы не подписаны ни на одного автора.
+        <a href="{% url 'posts:index' %}">
+          На главную
+        </a>
+      </p>
+    {% endif %}
     {% for post in page_obj %}
       {% include 'posts/includes/post.html' %}
     {% endfor %}  
